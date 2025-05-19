@@ -1,0 +1,43 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --foreground-rgb: 0, 0, 0;
+  --background-rgb: 255, 255, 255;
+  --status-bar-height: 47px; /* iPhone 状态栏高度 */
+}
+
+body {
+  color: rgb(var(--foreground-rgb));
+  background: rgb(var(--background-rgb));
+}
+
+/* 安全区域工具类 */
+.pt-safe {
+  padding-top: env(safe-area-inset-top, var(--status-bar-height));
+}
+
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.pl-safe {
+  padding-left: env(safe-area-inset-left);
+}
+
+.pr-safe {
+  padding-right: env(safe-area-inset-right);
+}
+
+/* 状态栏占位 */
+.status-bar-spacer {
+  height: var(--status-bar-height);
+  width: 100%;
+}
+
+/* 添加一个底部导航栏专用的安全区域类 */
+.nav-safe-bottom {
+  padding-bottom: calc(0.5rem + env(safe-area-inset-bottom, 0px));
+  height: calc(3.5rem + env(safe-area-inset-bottom, 0px));
+}
