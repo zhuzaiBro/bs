@@ -27,7 +27,7 @@ export default function SettingsPage() {
       <header className="bg-primary-300 fixed left-0 top-0 w-full text-white">
         <div className="status-bar-spacer"></div>
         <div className="p-4 flex items-center">
-          <Link href="/" className="mr-2">
+          <Link href="/family" className="mr-2">
             <ArrowLeft className="h-8 w-8" />
           </Link>
           <h1 className="text-2xl font-bold">个人设置</h1>
@@ -36,7 +36,7 @@ export default function SettingsPage() {
       <header className="bg-primary-300 opacity-0 text-white">
         <div className="status-bar-spacer"></div>
         <div className="p-4 flex items-center">
-          <Link href="/" className="mr-2">
+          <Link href="/family" className="mr-2">
             <ArrowLeft className="h-8 w-8" />
           </Link>
           <h1 className="text-2xl font-bold">个人设置</h1>

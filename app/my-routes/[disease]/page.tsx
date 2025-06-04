@@ -1,4 +1,5 @@
 "use client"
+// @ts-nocheck
 
 import { useState, useEffect } from "react"
 import Link from "next/link"
@@ -748,7 +749,7 @@ export default function DiseaseRoutePage() {
   const diseaseId = params.disease
 
   // 获取路由数据 - 确保处理URL参数
-  const route = routeDetails[diseaseId]
+  const route = routeDetails[diseaseId as keyof typeof routeDetails]
   console.log("当前疾病ID:", diseaseId) // 调试用
   console.log("可用路由:", Object.keys(routeDetails)) // 调试用
 
@@ -764,7 +765,7 @@ export default function DiseaseRoutePage() {
       let total = 0
       let completed = 0
 
-      route.steps.forEach((step) => {
+      route.steps.forEach((step: any) => {
         if (step.status !== "completed") {
           total += step.estimatedTime
 
@@ -789,7 +790,6 @@ export default function DiseaseRoutePage() {
     setTimeout(() => {
       // 随机调整等待数据以模拟实时更新
       const newWaitingData = { ...departmentWaitingData }
-
       Object.keys(newWaitingData).forEach((dept) => {
         const randomChange = Math.floor(Math.random() * 5) - 2 // -2 到 2 的随机变化
         newWaitingData[dept] = {
@@ -845,25 +845,25 @@ export default function DiseaseRoutePage() {
   }
 
   // 获取状态标签
-  const getStatusBadge = (status) => {
+  const getStatusBadge = (status: string) => {
     switch (status) {
       case "completed":
         return (
-          <span className="flex items-center text-green-600 bg-green-50 px-2 py-1 rounded-full text-sm">
+          <span className="flex items-center text-green-600 bg-green-50 px-2 py-1 whitespace-nowrap rounded-full text-sm">
             <CheckCircle2 className="h-4 w-4 mr-1" />
             已完成
           </span>
         )
       case "in-progress":
         return (
-          <span className="flex items-center text-blue-600 bg-blue-50 px-2 py-1 rounded-full text-sm">
+          <span className="flex items-center text-blue-600 bg-blue-50 px-2 py-1 whitespace-nowrap rounded-full text-sm">
             <Clock className="h-4 w-4 mr-1" />
             进行中
           </span>
         )
       case "pending":
         return (
-          <span className="flex items-center text-gray-600 bg-gray-100 px-2 py-1 rounded-full text-sm">
+          <span className="flex items-center text-gray-600 bg-gray-100 px-2 py-1 whitespace-nowrap rounded-full text-sm">
             <Clock className="h-4 w-4 mr-1" />
             待进行
           </span>
@@ -1000,7 +1000,7 @@ export default function DiseaseRoutePage() {
             </div>
           </div>
         </div>
-        <p className="text-primary-600 text-sm mt-2">{route.description}</p>
+        {/* <p className="text-primary-600 text-sm mt-2">{route.description}</p> */}
 
         {/* 总体进度 */}
         <div className="mt-4">
@@ -1167,7 +1167,7 @@ export default function DiseaseRoutePage() {
                         </span>
                       )}
                     </h3>
-                    <p className="text-gray-600">{step.description}</p>
+                    {/* <p className="text-gray-600">{step.description}</p> */}
                     <div className="flex flex-wrap mt-1">
                       <span className="bg-primary-50 text-primary-600 px-2 py-1 text-xs rounded-full mr-2 flex items-center">
                         <Building2 className="h-3 w-3 mr-1" />

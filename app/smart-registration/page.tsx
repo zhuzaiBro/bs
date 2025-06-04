@@ -209,7 +209,7 @@ export default function SmartRegistrationPage() {
         <div className="status-bar-spacer"></div>
         <div className="p-4 flex items-center justify-between">
           <div className="flex items-center">
-            <Link href="/" className="mr-2">
+            <Link href="/family" className="mr-2">
               <ArrowLeft className="h-8 w-8" />
             </Link>
             <h1 className="text-2xl font-bold">智能导诊</h1>
@@ -224,7 +224,7 @@ export default function SmartRegistrationPage() {
         <div className="status-bar-spacer"></div>
         <div className="p-4 flex items-center justify-between">
           <div className="flex items-center">
-            <Link href="/" className="mr-2">
+            <Link href="/family" className="mr-2">
               <ArrowLeft className="h-8 w-8" />
             </Link>
             <h1 className="text-2xl font-bold">智能导诊</h1>

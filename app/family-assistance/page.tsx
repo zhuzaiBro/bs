@@ -72,7 +72,7 @@ export default function FamilyAssistancePage() {
         <div className="status-bar-spacer"></div>
         <div className="p-4 flex items-center justify-between">
           <div className="flex items-center">
-            <Link href="/" className="mr-2">
+            <Link href="/family" className="mr-2">
               <ArrowLeft className="h-8 w-8" />
             </Link>
             <h1 className="text-xl font-bold">家人协助</h1>

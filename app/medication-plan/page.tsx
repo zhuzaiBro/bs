@@ -16,9 +16,25 @@ import {
   ChevronRight,
 } from "lucide-react"
 
+// 添加类型定义
+interface Medication {
+  id: string;
+  name: string;
+  dosage: string;
+  frequency: string;
+  timeSlots: string[];
+  startDate: string;
+  endDate: string;
+  instructions: string;
+  color: string;
+  shape: string;
+  notes: string;
+  createdBy: string;
+}
+
 export default function MedicationPlanPage() {
-  const [medications, setMedications] = useState([])
-  const [showDeleteConfirm, setShowDeleteConfirm] = useState(null)
+  const [medications, setMedications] = useState<Medication[]>([])
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState<string | null>(null)
 
   // 从本地存储加载药物数据
   useEffect(() => {
@@ -27,15 +43,20 @@ export default function MedicationPlanPage() {
       setMedications(JSON.parse(storedMedications))
     } else {
       // 示例数据
-      const exampleMedications = [
+      const today = new Date().toISOString().split("T")[0]
+      const futureDate = new Date()
+      futureDate.setMonth(futureDate.getMonth() + 3)
+      const futureDateStr = futureDate.toISOString().split("T")[0]
+      
+      const exampleMedications: Medication[] = [
         {
           id: "1",
           name: "降压药",
           dosage: "5mg",
           frequency: "每日两次",
           timeSlots: ["08:00", "20:00"],
-          startDate: "2023-11-01",
-          endDate: "2023-12-31",
+          startDate: today,
+          endDate: futureDateStr,
           instructions: "饭后服用",
           color: "蓝色",
           shape: "圆形",
@@ -45,16 +66,30 @@ export default function MedicationPlanPage() {
         {
           id: "2",
           name: "降糖药",
-          dosage: "10mg",
+          dosage: "2片",
           frequency: "每日三次",
           timeSlots: ["08:00", "13:00", "19:00"],
-          startDate: "2023-11-01",
-          endDate: "2024-01-15",
+          startDate: today,
+          endDate: futureDateStr,
           instructions: "饭前30分钟服用",
           color: "白色",
           shape: "椭圆形",
           notes: "空腹服用效果更佳",
           createdBy: "李医生",
+        },
+        {
+          id: "3",
+          name: "维生素D",
+          dosage: "1粒",
+          frequency: "每日一次",
+          timeSlots: ["12:00"],
+          startDate: today,
+          endDate: futureDateStr,
+          instructions: "随餐服用",
+          color: "黄色",
+          shape: "胶囊",
+          notes: "增强免疫力",
+          createdBy: "王医生",
         },
       ]
       setMedications(exampleMedications)
@@ -63,7 +98,7 @@ export default function MedicationPlanPage() {
   }, [])
 
   // 删除药物
-  const deleteMedication = (id) => {
+  const deleteMedication = (id: string) => {
     const updatedMedications = medications.filter((med) => med.id !== id)
     setMedications(updatedMedications)
     localStorage.setItem("medications", JSON.stringify(updatedMedications))
@@ -74,19 +109,19 @@ export default function MedicationPlanPage() {
   const today = new Date().toISOString().split("T")[0]
 
   // 检查药物是否在有效期内
-  const isActive = (startDate, endDate) => {
+  const isActive = (startDate: string, endDate: string) => {
     return startDate <= today && (!endDate || endDate >= today)
   }
 
   // 获取下一次服药时间
-  const getNextDoseTime = (timeSlots) => {
+  const getNextDoseTime = (timeSlots: string[]) => {
     const now = new Date()
     const currentHour = now.getHours()
     const currentMinute = now.getMinutes()
     const currentTime = `${currentHour.toString().padStart(2, "0")}:${currentMinute.toString().padStart(2, "0")}`
 
     // 找到今天还未到的最近时间
-    const nextTime = timeSlots.find((time) => time > currentTime)
+    const nextTime = timeSlots.find((time: string) => time > currentTime)
 
     if (nextTime) {
       return `今天 ${nextTime}`
@@ -105,7 +140,7 @@ export default function MedicationPlanPage() {
         <div className="status-bar-spacer"></div>
         <div className="p-4 flex items-center justify-between">
           <div className="flex items-center">
-            <Link href="/" className="mr-2">
+            <Link href="/family" className="mr-2">
               <ArrowLeft className="h-8 w-8" />
             </Link>
             <h1 className="text-xl font-bold">用药计划管理</h1>

@@ -59,7 +59,7 @@ export default function FamilyMembersPage() {
         <div className="status-bar-spacer"></div>
         <div className="p-4 flex items-center justify-between">
           <div className="flex items-center">
-            <Link href="/settings" className="mr-2">
+            <Link href="/family" className="mr-2">
               <ArrowLeft className="h-8 w-8" />
             </Link>
             <h1 className="text-2xl font-bold">就诊人管理</h1>
