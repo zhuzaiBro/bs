@@ -135,8 +135,8 @@ export default function MedicationPlanPage() {
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
-      {/* 顶部导航栏 */}
-      <header className="bg-primary-300 text-white">
+      {/* 顶部导航栏 - Fixed */}
+      <header className="fixed left-0 top-0 w-full z-50 bg-primary-300 text-white">
         <div className="status-bar-spacer"></div>
         <div className="p-4 flex items-center justify-between">
           <div className="flex items-center">
@@ -148,6 +148,20 @@ export default function MedicationPlanPage() {
           <Link href="/medication-plan/add" className="bg-white text-primary-500 p-2 rounded-full">
             <Plus className="h-6 w-6" />
           </Link>
+        </div>
+      </header>
+
+      {/* 占位元素 - 防止内容被固定header遮挡 */}
+      <header className="bg-primary-300 text-white opacity-0">
+        <div className="status-bar-spacer"></div>
+        <div className="p-4 flex items-center justify-between">
+          <div className="flex items-center">
+            <ArrowLeft className="h-8 w-8 mr-2" />
+            <h1 className="text-xl font-bold">为父母配置服药计划</h1>
+          </div>
+          <div className="bg-white text-primary-500 p-2 rounded-full">
+            <Plus className="h-6 w-6" />
+          </div>
         </div>
       </header>
 
@@ -170,13 +184,13 @@ export default function MedicationPlanPage() {
         {medications.length > 0 && (
           <div className="bg-green-50 border border-green-200 rounded-xl p-4">
             <div className="flex items-start">
-              <div className="w-6 h-6 rounded-full bg-green-500 flex items-center justify-center mr-3 mt-0.5">
+              <div className="w-6 h-6 flex-shrink-0 rounded-full bg-green-500 flex items-center justify-center mr-3 mt-0.5">
                 <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                 </svg>
               </div>
               <div>
-                <h3 className="font-semibold text-green-800 mb-1">服药计划已配置成功</h3>
+                <h3 className="font-semibold text-green-800 flex-1 mb-1">服药计划已配置成功</h3>
                 <p className="text-green-700 text-sm">
                   您已经为父母配置了 {medications.length} 个服药计划。父母现在可以在<strong>老人端首页的"今日提醒事项"</strong>中看到每日的服药提醒，点击提醒可查看详细的用药信息。
                 </p>
@@ -329,14 +343,21 @@ export default function MedicationPlanPage() {
         )}
       </div>
 
-      {/* 底部导航 */}
-      <div className="mt-auto p-4">
+      {/* 底部导航 - Fixed */}
+      <div className="fixed left-0 bottom-0 w-full z-40 p-4 bg-white border-t border-gray-200">
         <Link
           href="/medication-reminder"
           className="block w-full bg-primary-300 text-white py-3 rounded-xl text-center font-medium"
         >
           切换到老人用药提醒视图
         </Link>
+      </div>
+
+      {/* 占位元素 - 防止内容被固定底部导航遮挡 */}
+      <div className="p-4 opacity-0">
+        <div className="block w-full bg-primary-300 text-white py-3 rounded-xl text-center font-medium">
+          切换到老人用药提醒视图
+        </div>
       </div>
     </div>
   )

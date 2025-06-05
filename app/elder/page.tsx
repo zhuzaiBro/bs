@@ -270,7 +270,7 @@ export default function ElderHomePage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50">
       {/* 顶部问候区域 */}
-      <header className="fixed top-0 left-0 right-0 z-50 text-white shadow-lg" style={{ backgroundColor: 'rgb(128 170 222)' }}>
+      <header className="fixed top-0 left-0 pt-[20px] right-0 z-50 text-white shadow-lg" style={{ backgroundColor: 'rgb(128 170 222)' }}>
         <div className="p-6">
           <div className="flex justify-between items-start">
             <div>
@@ -299,7 +299,7 @@ export default function ElderHomePage() {
         </div>
       </header>
 
-      <main className="pt-[120px] p-4 space-y-6">
+      <main className="pt-[140px] p-4 space-y-6">
         {/* 今日提醒 */}
         {todayReminders.length > 0 && (
           <Card className="bg-white/80 backdrop-blur shadow-lg border-0">

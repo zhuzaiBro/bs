@@ -111,7 +111,18 @@ export default function EditMedicationPage() {
   if (notFound) {
     return (
       <div className="flex flex-col min-h-screen bg-gray-50">
-        <header className="bg-primary-300 text-white">
+        <header className="fixed left-0 top-0 w-full z-50 bg-primary-300 text-white shadow-lg">
+          <div className="status-bar-spacer"></div>
+          <div className="p-4 flex items-center">
+            <Link href="/medication-plan" className="mr-2">
+              <ArrowLeft className="h-8 w-8" />
+            </Link>
+            <h1 className="text-xl font-bold">编辑用药计划</h1>
+          </div>
+        </header>
+
+        {/* 占位元素 */}
+        <header className="bg-primary-300 text-white opacity-0">
           <div className="status-bar-spacer"></div>
           <div className="p-4 flex items-center">
             <Link href="/medication-plan" className="mr-2">
@@ -135,8 +146,19 @@ export default function EditMedicationPage() {
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
-      {/* 顶部导航栏 */}
-      <header className="bg-primary-300 text-white">
+      {/* 顶部导航栏 - Fixed */}
+      <header className="fixed left-0 top-0 w-full z-50 bg-primary-300 text-white shadow-lg">
+        <div className="status-bar-spacer"></div>
+        <div className="p-4 flex items-center">
+          <Link href="/medication-plan" className="mr-2">
+            <ArrowLeft className="h-8 w-8" />
+          </Link>
+          <h1 className="text-xl font-bold">编辑用药计划</h1>
+        </div>
+      </header>
+
+      {/* 占位元素 - 防止内容被固定header遮挡 */}
+      <header className="bg-primary-300 text-white opacity-0">
         <div className="status-bar-spacer"></div>
         <div className="p-4 flex items-center">
           <Link href="/medication-plan" className="mr-2">
@@ -365,14 +387,23 @@ export default function EditMedicationPage() {
             </div>
           </div>
 
-          {/* 提交按钮 */}
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-primary-300 text-white py-4 rounded-xl text-xl font-bold disabled:bg-gray-300 disabled:text-gray-500"
-          >
-            {loading ? "保存中..." : "保存修改"}
-          </button>
+          {/* 提交按钮 - Fixed */}
+          <div className="fixed left-0 bottom-0 w-full z-40 p-4 bg-white border-t border-gray-200">
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full bg-primary-300 text-white py-4 rounded-xl text-xl font-bold disabled:bg-gray-300 disabled:text-gray-500"
+            >
+              {loading ? "保存中..." : "保存修改"}
+            </button>
+          </div>
+
+          {/* 占位元素 - 防止内容被固定按钮遮挡 */}
+          <div className="p-4 opacity-0">
+            <button className="w-full bg-primary-300 text-white py-4 rounded-xl text-xl font-bold">
+              保存修改
+            </button>
+          </div>
         </form>
       </div>
     </div>

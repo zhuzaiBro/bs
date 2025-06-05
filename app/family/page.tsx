@@ -144,13 +144,14 @@ export default function FamilyPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50">
-      {/* 顶部问候区域 */}
-      <header className="text-white shadow-lg" style={{ backgroundColor: 'rgb(128 170 222)' }}>
+      {/* 顶部问候区域 - Fixed */}
+      <header className="fixed left-0 top-0 w-full z-50 text-white shadow-lg" style={{ backgroundColor: 'rgb(128 170 222)' }}>
+        <div className="status-bar-spacer"></div>
         <div className="p-6">
           <div className="flex justify-between items-start">
             <div>
               {/* <h1 className="text-2xl font-bold mb-1">子女端</h1> */}
-              <p className="text-blue-100 text-sm mb-1">关爱父母，从细节做起</p>
+              <p className="text-blue-100 text-[16px] font-bold mb-1">关爱父母，从细节做起</p>
 
               <p className="text-blue-100">今天是{currentTime.toLocaleDateString('zh-CN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
             </div>
@@ -175,6 +176,27 @@ export default function FamilyPage() {
         </div>
       </header>
 
+      {/* 占位元素 - 防止内容被固定header遮挡 */}
+      <header className="text-white opacity-0" style={{ backgroundColor: 'rgb(128 170 222)' }}>
+        <div className="status-bar-spacer"></div>
+        <div className="p-6">
+          <div className="flex justify-between items-start">
+            <div>
+              <p className="text-blue-100 text-sm mb-1">关爱父母，从细节做起</p>
+              <p className="text-blue-100">今天是{currentTime.toLocaleDateString('zh-CN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
+            </div>
+            <div className="flex gap-2">
+              <button className="p-2 rounded-full">
+                <HelpCircle className="h-6 w-6" />
+              </button>
+              <button className="p-2 rounded-full">
+                <Volume className="h-6 w-6" />
+              </button>
+            </div>
+          </div>
+        </div>
+      </header>
+
       <main className="p-4 space-y-6">
         {/* 统计概览 */}
         <Card className="bg-white/80 backdrop-blur shadow-lg border-0">
@@ -188,30 +210,45 @@ export default function FamilyPage() {
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-2 gap-4">
-              <div className="text-center">
+              <button
+                onClick={() => router.push('/family-members')}
+                className="text-center p-3 rounded-lg hover:bg-blue-50 transition-colors"
+              >
                 <div className="text-2xl font-bold" style={{ color: 'rgb(128 170 222)' }}>
                   {familyStats.totalMembers}
                 </div>
                 <div className="text-sm text-gray-600">管理家人</div>
-              </div>
-              <div className="text-center">
+              </button>
+              
+              <button
+                onClick={() => router.push('/appointments')}
+                className="text-center p-3 rounded-lg hover:bg-green-50 transition-colors"
+              >
                 <div className="text-2xl font-bold" style={{ color: 'rgb(34 197 94)' }}>
                   {familyStats.upcomingAppointments}
                 </div>
                 <div className="text-sm text-gray-600">预约安排</div>
-              </div>
-              <div className="text-center">
+              </button>
+              
+              <button
+                onClick={() => router.push('/medication-plan')}
+                className="text-center p-3 rounded-lg hover:bg-orange-50 transition-colors"
+              >
                 <div className="text-2xl font-bold" style={{ color: 'rgb(249 115 22)' }}>
                   {familyStats.activeMedications}
                 </div>
                 <div className="text-sm text-gray-600">用药计划</div>
-              </div>
-              <div className="text-center">
+              </button>
+              
+              <button
+                onClick={() => router.push('/family-assistance/settings')}
+                className="text-center p-3 rounded-lg hover:bg-purple-50 transition-colors"
+              >
                 <div className="text-2xl font-bold" style={{ color: 'rgb(168 85 247)' }}>
                   {familyStats.activeReminders}
                 </div>
                 <div className="text-sm text-gray-600">活跃提醒</div>
-              </div>
+              </button>
             </div>
           </CardContent>
         </Card>
