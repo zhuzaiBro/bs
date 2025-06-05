@@ -106,8 +106,8 @@ export default function FamilyPortalPage() {
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
-      {/* 顶部导航栏 */}
-      <header className="bg-primary-300 text-white">
+      {/* 顶部导航栏 - Fixed */}
+      <header className="fixed left-0 top-0 w-full z-50 bg-primary-300 text-white shadow-lg">
         <div className="status-bar-spacer"></div>
         <div className="p-4 flex items-center justify-between">
           <div className="flex items-center">
@@ -119,6 +119,18 @@ export default function FamilyPortalPage() {
           <Link href="/family-members" className="text-white">
             <UserPlus className="h-6 w-6" />
           </Link>
+        </div>
+      </header>
+
+      {/* 占位元素 - 防止内容被固定header遮挡 */}
+      <header className="bg-primary-300 text-white opacity-0">
+        <div className="status-bar-spacer"></div>
+        <div className="p-4 flex items-center justify-between">
+          <div className="flex items-center">
+            <ArrowLeft className="h-8 w-8" />
+            <h1 className="text-xl font-bold">家人关怀</h1>
+          </div>
+          <UserPlus className="h-6 w-6" />
         </div>
       </header>
 

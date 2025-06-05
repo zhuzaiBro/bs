@@ -54,19 +54,31 @@ export default function FamilyMembersPage() {
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
-      {/* 顶部导航栏 */}
-      <header className="bg-primary-300 text-white">
+      {/* 顶部导航栏 - Fixed */}
+      <header className="fixed left-0 top-0 w-full z-50 bg-primary-300 text-white shadow-lg">
         <div className="status-bar-spacer"></div>
         <div className="p-4 flex items-center justify-between">
           <div className="flex items-center">
             <Link href="/family" className="mr-2">
               <ArrowLeft className="h-8 w-8" />
             </Link>
-            <h1 className="text-2xl font-bold">就诊人管理</h1>
+            <h1 className="text-xl font-bold">就诊人管理</h1>
           </div>
           <Link href="/family-members/edit" className="bg-white text-primary-500 p-2 rounded-full">
             <UserPlus className="h-6 w-6" />
           </Link>
+        </div>
+      </header>
+
+      {/* 占位元素 - 防止内容被固定header遮挡 */}
+      <header className="bg-primary-300 text-white opacity-0">
+        <div className="status-bar-spacer"></div>
+        <div className="p-4 flex items-center justify-between">
+          <div className="flex items-center">
+            <ArrowLeft className="h-8 w-8" />
+            <h1 className="text-xl font-bold">就诊人管理</h1>
+          </div>
+          <UserPlus className="h-6 w-6" />
         </div>
       </header>
 

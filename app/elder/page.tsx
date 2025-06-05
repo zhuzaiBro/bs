@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { MapPin, Calendar, Pill, Phone, Navigation, Clock, Volume, HelpCircle, Heart, Settings, User, ChevronRight, ChevronDown, ChevronUp } from "lucide-react"
+import { MapPin, Calendar, Pill, Phone, Navigation, Clock, Volume, HelpCircle, Heart, Settings, User, ChevronRight, ChevronDown, ChevronUp, Nfc } from "lucide-react"
 import { useRouter } from "next/navigation"
 import {
   Tooltip,
@@ -548,6 +548,31 @@ export default function ElderHomePage() {
                     <h3 className="font-semibold text-gray-900">家人关爱</h3>
                     <p className="text-sm text-gray-600">联系家人管理</p>
                   </div>
+                </div>
+              </button>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* NFC数据分享 - 新增 */}
+        <Card className="bg-gradient-to-r from-orange-50 to-red-50 border-orange-200 shadow-lg">
+          <CardContent className="p-6">
+            <div className="text-center">
+              <div className="w-20 h-20 mx-auto rounded-full flex items-center justify-center bg-gradient-to-r from-orange-500 to-red-500 shadow-lg mb-4">
+                <Nfc className="h-10 w-10 text-white" />
+              </div>
+              <h3 className="text-xl font-bold text-gray-900 mb-2">与子女分享健康数据</h3>
+              <p className="text-gray-600 mb-4">
+                通过NFC碰一碰，安全快速地把您的健康信息分享给子女，让他们更好地关心您
+              </p>
+              <button
+                onClick={() => router.push('/nfc-authorization/elder')}
+                className="w-full bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white py-4 rounded-xl flex items-center justify-center gap-3 transition-all duration-200 shadow-md hover:shadow-lg group"
+              >
+                <Nfc className="h-6 w-6 group-hover:scale-110 transition-transform duration-200" />
+                <div className="text-left">
+                  <div className="font-bold text-lg">开始NFC分享</div>
+                  <div className="text-sm opacity-90">与子女手机碰一碰</div>
                 </div>
               </button>
             </div>

@@ -16,7 +16,8 @@ import {
   Activity,
   Shield,
   Smartphone,
-  ChevronRight
+  ChevronRight,
+  Nfc
 } from "lucide-react"
 import { useRouter } from "next/navigation"
 import {
@@ -121,6 +122,12 @@ export default function FamilyPage() {
       title: "健康监控",
       description: "查看家人健康状况",
       href: "/family-portal"
+    },
+    {
+      icon: <Nfc className="w-6 h-6" />,
+      title: "NFC授权",
+      description: "碰一碰授权医疗数据",
+      href: "/nfc-authorization"
     },
     {
       icon: <Shield className="w-6 h-6" />,
@@ -317,7 +324,24 @@ export default function FamilyPage() {
             </div>
           </CardContent>
         </Card>
+
+        {/* 底部占位空间，防止被固定按钮遮挡 */}
+        <div className="h-20"></div>
       </main>
+
+      {/* NFC授权固定按钮 - 新增 */}
+      <div className="fixed left-0 bottom-0 w-full z-40 p-4 bg-white/95 backdrop-blur border-t border-gray-200">
+        <button
+          onClick={() => router.push('/nfc-authorization')}
+          className="w-full bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white py-4 rounded-xl flex items-center justify-center gap-3 transition-all duration-200 shadow-lg hover:shadow-xl group"
+        >
+          <Nfc className="h-6 w-6 group-hover:scale-110 transition-transform duration-200" />
+          <div className="text-left">
+            <div className="font-bold text-lg">NFC碰一碰授权</div>
+            <div className="text-sm opacity-90">快速分享医疗数据给父母</div>
+          </div>
+        </button>
+      </div>
     </div>
   )
 }
