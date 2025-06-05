@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { MapPin, Calendar, Pill, Phone, Navigation, Clock, Volume, HelpCircle, Heart, Settings, User, ChevronRight } from "lucide-react"
+import { MapPin, Calendar, Pill, Phone, Navigation, Clock, Volume, HelpCircle, Heart, Settings, User, ChevronRight, ChevronDown, ChevronUp } from "lucide-react"
 import { useRouter } from "next/navigation"
 import {
   Tooltip,
@@ -52,6 +52,7 @@ export default function ElderHomePage() {
   const router = useRouter()
   const [currentTime, setCurrentTime] = useState(new Date())
   const [todayReminders, setTodayReminders] = useState<Reminder[]>([])
+  const [isRemindersExpanded, setIsRemindersExpanded] = useState(false)
 
   // 从localStorage加载真实数据
   useEffect(() => {
@@ -258,10 +259,18 @@ export default function ElderHomePage() {
     }
   }
 
+  // 折叠/展开切换
+  const toggleRemindersExpanded = () => {
+    setIsRemindersExpanded(!isRemindersExpanded)
+  }
+
+  // 获取要显示的提醒数量
+  const displayedReminders = isRemindersExpanded ? todayReminders : todayReminders.slice(0, 2)
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50">
       {/* 顶部问候区域 */}
-      <header className="text-white shadow-lg" style={{ backgroundColor: 'rgb(128 170 222)' }}>
+      <header className="fixed top-0 left-0 right-0 z-50 text-white shadow-lg" style={{ backgroundColor: 'rgb(128 170 222)' }}>
         <div className="p-6">
           <div className="flex justify-between items-start">
             <div>
@@ -290,66 +299,141 @@ export default function ElderHomePage() {
         </div>
       </header>
 
-      <main className="p-4 space-y-6">
+      <main className="pt-[120px] p-4 space-y-6">
         {/* 今日提醒 */}
         {todayReminders.length > 0 && (
           <Card className="bg-white/80 backdrop-blur shadow-lg border-0">
             <CardHeader className="pb-4">
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-full flex items-center justify-center" style={{ backgroundColor: 'rgb(128 170 222)' }}>
-                  <Clock className="h-4 w-4 text-white" />
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-full flex items-center justify-center" style={{ backgroundColor: 'rgb(128 170 222)' }}>
+                    <Clock className="h-4 w-4 text-white" />
+                  </div>
+                  <CardTitle className="text-xl">今日提醒</CardTitle>
                 </div>
-                <CardTitle className="text-xl">今日提醒</CardTitle>
+                
+                {/* 展开/折叠按钮 */}
+                {todayReminders.length > 2 && (
+                  <button
+                    onClick={toggleRemindersExpanded}
+                    className="flex items-center gap-1 text-sm font-medium transition-colors duration-200 rounded-lg px-3 py-2 hover:bg-white/60"
+                    style={{ color: 'rgb(128 170 222)' }}
+                  >
+                    <span>{isRemindersExpanded ? '收起' : `查看全部(${todayReminders.length})`}</span>
+                    {isRemindersExpanded ? (
+                      <ChevronUp className="h-4 w-4 transition-transform duration-300" />
+                    ) : (
+                      <ChevronDown className="h-4 w-4 transition-transform duration-300" />
+                    )}
+                  </button>
+                )}
               </div>
             </CardHeader>
             <CardContent>
-              <div className="space-y-3">
-                {todayReminders.map((reminder) => (
-                  <button 
-                    key={reminder.id} 
-                    onClick={() => handleReminderClick(reminder)}
-                    className="w-full bg-white/60 rounded-xl p-4 border border-gray-100 hover:shadow-md hover:bg-white/80 transition-all duration-200 text-left group"
-                  >
-                    <div className="flex justify-between items-center">
-                      <div className="flex items-start gap-3 flex-1">
-                        {/* 图标 */}
-                        <div className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0" 
-                             style={{ backgroundColor: reminder.type === 'appointment' ? 'rgb(34 197 94 / 0.1)' : 'rgb(249 115 22 / 0.1)' }}>
-                          {reminder.type === 'appointment' ? (
-                            <Calendar className="h-5 w-5" style={{ color: 'rgb(34 197 94)' }} />
-                          ) : (
-                            <Pill className="h-5 w-5" style={{ color: 'rgb(249 115 22)' }} />
-                          )}
-                        </div>
-                        
-                        {/* 内容 */}
-                        <div className="flex-1">
-                          <h3 className="font-semibold text-gray-900 mb-1">{reminder.title}</h3>
-                          <p className="text-sm text-gray-600">{reminder.description}</p>
-                          {reminder.type === 'appointment' && reminder.location && (
-                            <p className="text-xs text-gray-500 mt-1">📍 {reminder.location}</p>
-                          )}
-                          {reminder.type === 'medication' && reminder.dosage && (
-                            <p className="text-xs text-gray-500 mt-1">💊 剂量: {reminder.dosage}</p>
-                          )}
-                        </div>
-                      </div>
-                      
-                      {/* 时间和箭头 */}
-                      <div className="text-right flex items-center gap-2">
-                        <div>
-                          <div className="text-lg font-bold" style={{ color: 'rgb(128 170 222)' }}>
-                            {reminder.time}
+              <div className="space-y-3 overflow-hidden">
+                <div 
+                  className={`transition-all duration-500 ease-in-out ${
+                    isRemindersExpanded 
+                      ? 'max-h-[800px] opacity-100' 
+                      : todayReminders.length > 2 
+                        ? 'max-h-[200px] opacity-100' 
+                        : 'max-h-none opacity-100'
+                  }`}
+                  style={{
+                    transform: isRemindersExpanded ? 'translateY(0)' : 'translateY(0)',
+                  }}
+                >
+                  {displayedReminders.map((reminder, index) => (
+                    <div
+                      key={reminder.id}
+                      className={`transition-all duration-300 ease-in-out ${
+                        index < 2 || isRemindersExpanded 
+                          ? 'opacity-100 translate-y-0 scale-100' 
+                          : 'opacity-0 translate-y-2 scale-95'
+                      }`}
+                      style={{
+                        transitionDelay: isRemindersExpanded ? `${index * 50}ms` : '0ms'
+                      }}
+                    >
+                      <button 
+                        onClick={() => handleReminderClick(reminder)}
+                        className="w-full bg-white/60 rounded-xl p-4 border border-gray-100 hover:shadow-md hover:bg-white/80 transition-all duration-200 text-left group"
+                      >
+                        <div className="flex justify-between items-center">
+                          <div className="flex items-start gap-3 flex-1">
+                            {/* 图标 */}
+                            <div className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0" 
+                                 style={{ backgroundColor: reminder.type === 'appointment' ? 'rgb(34 197 94 / 0.1)' : 'rgb(249 115 22 / 0.1)' }}>
+                              {reminder.type === 'appointment' ? (
+                                <Calendar className="h-5 w-5" style={{ color: 'rgb(34 197 94)' }} />
+                              ) : (
+                                <Pill className="h-5 w-5" style={{ color: 'rgb(249 115 22)' }} />
+                              )}
+                            </div>
+                            
+                            {/* 内容 */}
+                            <div className="flex-1">
+                              <h3 className="font-semibold text-gray-900 mb-1">{reminder.title}</h3>
+                              <p className="text-sm text-gray-600">{reminder.description}</p>
+                              {reminder.type === 'appointment' && reminder.location && (
+                                <p className="text-xs text-gray-500 mt-1">📍 {reminder.location}</p>
+                              )}
+                              {reminder.type === 'medication' && reminder.dosage && (
+                                <p className="text-xs text-gray-500 mt-1">💊 剂量: {reminder.dosage}</p>
+                              )}
+                            </div>
                           </div>
-                          <div className="text-xs text-gray-500">
-                            {reminder.type === 'appointment' ? '预约' : '用药'}
+                          
+                          {/* 时间和箭头 */}
+                          <div className="text-right flex items-center gap-2">
+                            <div>
+                              <div className="text-lg font-bold" style={{ color: 'rgb(128 170 222)' }}>
+                                {reminder.time}
+                              </div>
+                              <div className="text-xs text-gray-500">
+                                {reminder.type === 'appointment' ? '预约' : '用药'}
+                              </div>
+                            </div>
+                            <ChevronRight className="h-5 w-5 text-gray-400 group-hover:text-gray-600 transition-colors" />
                           </div>
                         </div>
-                        <ChevronRight className="h-5 w-5 text-gray-400 group-hover:text-gray-600 transition-colors" />
-                      </div>
+                      </button>
                     </div>
-                  </button>
-                ))}
+                  ))}
+                </div>
+                
+                {/* 渐变遮罩效果（当折叠且有更多项目时） */}
+                {!isRemindersExpanded && todayReminders.length > 2 && (
+                  <div 
+                    className="absolute bottom-0 left-0 right-0 h-8 pointer-events-none transition-opacity duration-300"
+                    style={{
+                      background: 'linear-gradient(to bottom, transparent, rgba(255, 255, 255, 0.9))'
+                    }}
+                  />
+                )}
+                
+                {/* 底部展开/收起按钮 */}
+                {todayReminders.length > 2 && (
+                  <div className="pt-3 mt-3 border-t border-gray-100">
+                    <button
+                      onClick={toggleRemindersExpanded}
+                      className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-lg border border-gray-200 bg-white/80 hover:bg-white hover:shadow-md transition-all duration-200 text-sm font-medium"
+                      style={{ color: 'rgb(128 170 222)' }}
+                    >
+                      <span>
+                        {isRemindersExpanded 
+                          ? '收起提醒列表' 
+                          : `展开查看全部 ${todayReminders.length} 条提醒`
+                        }
+                      </span>
+                      {isRemindersExpanded ? (
+                        <ChevronUp className="h-4 w-4 transition-transform duration-300" />
+                      ) : (
+                        <ChevronDown className="h-4 w-4 transition-transform duration-300" />
+                      )}
+                    </button>
+                  </div>
+                )}
               </div>
             </CardContent>
           </Card>

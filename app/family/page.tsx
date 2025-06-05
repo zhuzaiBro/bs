@@ -91,8 +91,8 @@ export default function FamilyPage() {
     },
     {
       icon: <Pill className="w-8 h-8 text-white" />,
-      title: "用药管理", 
-      description: "管理父母的用药计划",
+      title: "配置服药计划", 
+      description: "为父母设置用药提醒",
       bgColor: "rgb(249 115 22)",
       href: "/medication-plan",
       stats: `${familyStats.activeMedications}种药物`

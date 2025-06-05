@@ -849,53 +849,54 @@ export default function DiseaseRoutePage() {
     switch (status) {
       case "completed":
         return (
-          <span className="flex items-center text-green-600 bg-green-50 px-2 py-1 whitespace-nowrap rounded-full text-sm">
-            <CheckCircle2 className="h-4 w-4 mr-1" />
-            已完成
+          <span className="bg-green-700 text-white p-2 text-[14px] whitespace-nowrap font-bold rounded-full border-2 border-green-800">
+            ✓ 已完成
           </span>
         )
       case "in-progress":
         return (
-          <span className="flex items-center text-blue-600 bg-blue-50 px-2 py-1 whitespace-nowrap rounded-full text-sm">
-            <Clock className="h-4 w-4 mr-1" />
-            进行中
+          <span className="bg-blue-700 text-white p-2 whitespace-nowrap text-[14px] font-bold rounded-full border-2 border-blue-800">
+            ⋯ 进行中
           </span>
         )
       case "pending":
         return (
-          <span className="flex items-center text-gray-600 bg-gray-100 px-2 py-1 whitespace-nowrap rounded-full text-sm">
-            <Clock className="h-4 w-4 mr-1" />
-            待进行
+          <span className="bg-gray-600 text-white p-2 whitespace-nowrap text-[14px]  font-bold rounded-full border-2 border-gray-700">
+            ○ 待进行
           </span>
         )
       default:
-        return null
+        return (
+          <span className="bg-gray-600 text-whitep-2 whitespace-nowrap text-[14px] font-bold rounded-full border-2 border-gray-700">
+            ○ 待进行
+          </span>
+        )
     }
   }
 
   // 获取等待状态颜色
-  const getWaitingStatusColor = (status) => {
+  const getWaitingStatusColor = (status: string) => {
     switch (status) {
       case "low":
-        return "text-green-600 bg-green-50"
+        return "bg-green-100 text-green-800 border-2 border-green-300"
       case "medium":
-        return "text-yellow-600 bg-yellow-50"
+        return "bg-orange-100 text-orange-800 border-2 border-orange-300"
       case "busy":
-        return "text-red-600 bg-red-50"
+        return "bg-red-100 text-red-800 border-2 border-red-300"
       default:
-        return "text-gray-600 bg-gray-50"
+        return "bg-gray-100 text-gray-800 border-2 border-gray-300"
     }
   }
 
   // 获取等待状态文本
-  const getWaitingStatusText = (status) => {
+  const getWaitingStatusText = (status: string) => {
     switch (status) {
       case "low":
-        return "空闲"
+        return "人少"
       case "medium":
         return "一般"
       case "busy":
-        return "繁忙"
+        return "较忙"
       default:
         return "未知"
     }
@@ -965,377 +966,156 @@ export default function DiseaseRoutePage() {
       {/* 顶部导航栏 */}
       <header className="fixed left-0 top-0 z-10 w-full bg-primary-300 text-white">
         <div className="status-bar-spacer"></div>
-        <div className="p-4 flex items-center">
-          <Link href="/my-routes" className="mr-2">
+        <div className="p-5 flex items-center">
+          <Link href="/medical" className="mr-3">
             <ArrowLeft className="h-8 w-8" />
           </Link>
-          <h1 className="text-xl font-bold">{route.disease}诊断导航</h1>
+          <h1 className="text-2xl font-bold">{route.disease}就医指导</h1>
         </div>
       </header>
       <header className="bg-primary-300 text-white opacity-0">
         <div className="status-bar-spacer"></div>
-        <div className="p-4 flex items-center">
-          <Link href="/my-routes" className="mr-2">
+        <div className="p-5 flex items-center">
+          <Link href="/medical" className="mr-3">
             <ArrowLeft className="h-8 w-8" />
           </Link>
-          <h1 className="text-xl font-bold">{route.disease}诊断导航</h1>
+          <h1 className="text-2xl font-bold">{route.disease}就医指导</h1>
         </div>
       </header>
 
-      {/* 导航图概览 */}
-      <div className="p-4 bg-primary-50 border-b border-primary-100">
-        <div className="flex items-center mb-2">
-          <div className="bg-white p-2 rounded-full mr-3">{route.icon}</div>
+      {/* 简化的概览信息 */}
+      <div className="p-5 bg-white border-b-2 border-gray-200">
+        <div className="flex items-center mb-4">
+          <div className="bg-blue-100 p-3 rounded-full mr-4">{route.icon}</div>
           <div>
-            <h2 className="text-lg font-bold text-primary-700">{route.disease}诊断导航图</h2>
-            <div className="flex items-center text-sm text-primary-600">
-              <User className="h-4 w-4 mr-1" />
-              <span>
-                {route.doctor} ({route.department})
-              </span>
-            </div>
-            <div className="flex items-center text-sm text-primary-600 mt-1">
-              <Calendar className="h-4 w-4 mr-1" />
-              <span>开具日期: {formatDate(route.date)}</span>
-            </div>
+            <h2 className="text-2xl font-bold text-gray-800">{route.disease}就医流程</h2>
+            <p className="text-lg text-gray-600 mt-1">{route.doctor} · {route.department}</p>
           </div>
         </div>
-        {/* <p className="text-primary-600 text-sm mt-2">{route.description}</p> */}
 
-        {/* 总体进度 */}
-        <div className="mt-4">
-          <div className="flex justify-between text-sm mb-1">
-            <span className="text-primary-700">
-              总体进度: {completedSteps}/{route.steps.length}
+        {/* 简化的总体进度 */}
+        <div className="bg-blue-50 p-4 rounded-xl border border-blue-200">
+          <div className="flex justify-between items-center mb-2">
+            <span className="text-xl font-bold text-blue-800">
+              完成进度：{completedSteps}/{route.steps.length} 个步骤
             </span>
-            <span className="text-primary-700">{Math.round(progressPercentage)}%</span>
+            <span className="text-xl font-bold text-blue-800">{Math.round(progressPercentage)}%</span>
           </div>
-          <div className="w-full bg-primary-200 rounded-full h-2.5">
-            <div className="bg-primary-500 h-2.5 rounded-full" style={{ width: `${progressPercentage}%` }}></div>
+          <div className="w-full bg-blue-200 rounded-full h-4">
+            <div className="bg-blue-600 h-4 rounded-full transition-all duration-500" style={{ width: `${progressPercentage}%` }}></div>
           </div>
-        </div>
-
-        {/* 等待状态刷新按钮 */}
-        <button
-          onClick={refreshWaitingData}
-          disabled={isRefreshingWaiting}
-          className="mt-4 flex items-center justify-center w-full bg-white border border-primary-200 text-primary-600 py-2 rounded-lg"
-        >
-          <RefreshCw className={`h-4 w-4 mr-2 ${isRefreshingWaiting ? "animate-spin" : ""}`} />
-          {isRefreshingWaiting ? "正在刷新等待数据..." : "刷新各科室等待状况"}
-        </button>
-
-        {/* AI智能优化信息 */}
-        <div className="mt-4">
-          <button
-            onClick={() => setShowAiOptimization(!showAiOptimization)}
-            className="flex items-center text-primary-600 bg-primary-100 px-3 py-2 rounded-lg w-full justify-between"
-          >
-            <div className="flex items-center">
-              <Zap className="h-5 w-5 mr-2" />
-              <span className="font-medium">AI智能路线优化</span>
-            </div>
-            <ChevronRight className={`h-5 w-5 transition-transform ${showAiOptimization ? "rotate-90" : ""}`} />
-          </button>
-
-          {showAiOptimization && (
-            <div className="bg-white rounded-lg p-4 mt-2 border border-primary-100">
-              <div className="grid grid-cols-2 gap-4 mb-4">
-                <div className="flex flex-col items-center bg-blue-50 p-3 rounded-lg">
-                  <CalendarClock className="h-6 w-6 text-blue-500 mb-1" />
-                  <span className="text-sm text-gray-600">预计总用时</span>
-                  <span className="font-bold text-blue-700">{formatTime(route.aiOptimization.totalEstimatedTime)}</span>
-                </div>
-                <div className="flex flex-col items-center bg-green-50 p-3 rounded-lg">
-                  <Hourglass className="h-6 w-6 text-green-500 mb-1" />
-                  <span className="text-sm text-gray-600">AI优化节省</span>
-                  <span className="font-bold text-green-700">{formatTime(route.aiOptimization.timeReduction)}</span>
-                </div>
-              </div>
-
-              <div className="mb-4">
-                <div className="flex items-center mb-2">
-                  <Calendar className="h-5 w-5 text-primary-500 mr-2" />
-                  <span className="font-medium">预计完成日期: </span>
-                  <span className="ml-1 text-primary-700">
-                    {formatDate(route.aiOptimization.estimatedCompletionDate)}
-                  </span>
-                </div>
-
-                <div className="flex items-center mb-2">
-                  <ArrowRightLeft className="h-5 w-5 text-primary-500 mr-2" />
-                  <span className="font-medium">剩余预计用时: </span>
-                  <span className="ml-1 text-primary-700">{formatTime(remainingTime)}</span>
-                </div>
-              </div>
-
-              {/* 最佳路线推荐 */}
-              {optimalRoute.length > 0 && (
-                <div className="mb-4">
-                  <div className="flex items-center mb-2">
-                    <MapPin className="h-5 w-5 text-green-500 mr-2" />
-                    <span className="font-medium">当前最佳路线推荐:</span>
-                  </div>
-                  <div className="bg-green-50 p-3 rounded-lg">
-                    <ol className="list-decimal pl-5 space-y-1 text-sm text-gray-700">
-                      {optimalRoute.slice(0, 3).map((step, index) => (
-                        <li key={index} className="flex items-center justify-between">
-                          <div>
-                            <span className="font-medium">{step.name}</span> ({step.department})
-                          </div>
-                          {step.waitingStatus && (
-                            <span
-                              className={`text-xs px-2 py-0.5 rounded-full ${getWaitingStatusColor(step.waitingStatus.status)}`}
-                            >
-                              等待: {step.waitingStatus.estimatedWaitTime}分钟
-                            </span>
-                          )}
-                        </li>
-                      ))}
-                    </ol>
-                    <p className="text-xs text-gray-500 mt-2">*基于当前各科室等待情况智能推荐</p>
-                  </div>
-                </div>
-              )}
-
-              <div className="mb-3">
-                <div className="flex items-center mb-2">
-                  <Lightbulb className="h-5 w-5 text-yellow-500 mr-2" />
-                  <span className="font-medium">AI优化建议:</span>
-                </div>
-                <ul className="list-disc pl-5 space-y-1 text-sm text-gray-700">
-                  {route.aiOptimization.optimizationTips.map((tip, index) => (
-                    <li key={index}>{tip}</li>
-                  ))}
-                </ul>
-              </div>
-
-              {route.aiOptimization.parallelSteps.length > 0 && (
-                <div>
-                  <div className="flex items-center mb-2">
-                    <BarChart3 className="h-5 w-5 text-purple-500 mr-2" />
-                    <span className="font-medium">可并行步骤:</span>
-                  </div>
-                  <div className="bg-purple-50 p-3 rounded-lg text-sm">
-                    {route.aiOptimization.parallelSteps.map((group, index) => (
-                      <div key={index} className="mb-2 last:mb-0">
-                        <span className="font-medium">并行组 {index + 1}: </span>
-                        {group
-                          .map((stepId) => {
-                            const step = route.steps.find((s) => s.id === stepId)
-                            return step ? step.name : ""
-                          })
-                          .join(" + ")}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
-          )}
         </div>
       </div>
 
-      {/* 步骤列表 */}
-      <div className="p-4">
-        <h2 className="text-xl font-bold mb-4">诊断步骤</h2>
+      {/* 简化的步骤列表 */}
+      <div className="p-5">
+        <h2 className="text-2xl font-bold text-gray-800 mb-5">就医步骤</h2>
         <div className="space-y-4">
           {route.steps.map((step, index) => (
-            <div key={step.id} className="bg-white rounded-xl shadow-md overflow-hidden">
+            <div key={step.id} className="bg-white rounded-xl shadow-md border-2 border-gray-200">
               <div
-                className="p-4 flex justify-between items-center cursor-pointer"
+                className="p-5 flex justify-between items-center cursor-pointer"
                 onClick={() => setExpandedStep(expandedStep === step.id ? null : step.id)}
               >
-                <div className="flex items-start">
+                <div className="flex items-center">
                   <div
-                    className={`p-2 rounded-full mr-3 flex-shrink-0 ${
+                    className={`p-3 rounded-full mr-4 flex-shrink-0 ${
                       step.status === "completed"
-                        ? "bg-green-100"
+                        ? "bg-green-700"
                         : step.status === "in-progress"
-                          ? "bg-blue-100"
-                          : "bg-gray-100"
+                          ? "bg-blue-700"
+                          : "bg-gray-600"
                     }`}
                   >
-                    {step.icon}
+                    <div className="text-white">
+                      {step.icon}
+                    </div>
                   </div>
                   <div>
-                    <h3 className="text-lg font-bold">
-                      {index + 1}. {step.name}
-                      {isParallelStep(step.id) && (
-                        <span className="ml-2 text-xs bg-purple-100 text-purple-600 px-2 py-0.5 rounded-full">
-                          可并行
-                        </span>
-                      )}
+                    <h3 className="text-xl font-bold text-gray-800 mb-2">
+                      第{index + 1}步：{step.name}
                     </h3>
-                    {/* <p className="text-gray-600">{step.description}</p> */}
-                    <div className="flex flex-wrap mt-1">
-                      <span className="bg-primary-50 text-primary-600 px-2 py-1 text-xs rounded-full mr-2 flex items-center">
-                        <Building2 className="h-3 w-3 mr-1" />
+                    <div className="flex flex-wrap gap-2">
+                      <span className="bg-blue-100 text-blue-800 px-3 py-2 text-base font-medium rounded-full">
                         {step.department}
                       </span>
-                      <span className="bg-purple-50 text-purple-600 px-2 py-1 text-xs rounded-full flex items-center mr-2">
-                        <Clock className="h-3 w-3 mr-1" />
-                        {formatTime(step.estimatedTime)}
+                      <span className="bg-purple-100 text-purple-800 px-3 py-2 text-base font-medium rounded-full">
+                        预计{formatTime(step.estimatedTime)}
                       </span>
-
-                      {/* 等待状态标签 */}
-                      {step.waitingStatus && step.status !== "completed" && (
-                        <span
-                          className={`px-2 py-1 text-xs rounded-full flex items-center ${getWaitingStatusColor(step.waitingStatus.status)}`}
-                        >
-                          <BarChart className="h-3 w-3 mr-1" />
-                          {getWaitingStatusText(step.waitingStatus.status)} ({step.waitingStatus.waitingCount}人等待)
-                        </span>
-                      )}
                     </div>
                   </div>
                 </div>
-                <div className="flex items-center">
+                <div className="flex items-center gap-3">
                   {getStatusBadge(step.status)}
                   <ChevronRight
-                    className={`h-6 w-6 text-gray-400 transition-transform ml-2 ${expandedStep === step.id ? "rotate-90" : ""}`}
+                    className={`h-7 w-7 text-gray-500 transition-transform ${expandedStep === step.id ? "rotate-90" : ""}`}
                   />
                 </div>
               </div>
 
-              {/* 详情展开区域 */}
+              {/* 简化的详情展开区域 */}
               {expandedStep === step.id && (
-                <div className="p-4 pt-0 bg-primary-50 border-t border-primary-100">
-                  {/* 完成状态和日期 */}
-                  <div className="mb-3 flex justify-between">
-                    <div>
-                      <span className="font-medium text-primary-700">状态: </span>
-                      {step.status === "completed" ? "已完成" : step.status === "in-progress" ? "进行中" : "待进行"}
-                    </div>
-                    {step.status === "completed" && (
-                      <div>
-                        <span className="font-medium text-primary-700">完成日期: </span>
-                        {formatDate(step.completedDate)}
-                      </div>
-                    )}
-                    {step.appointmentDate && (
-                      <div>
-                        <span className="font-medium text-primary-700">预约日期: </span>
-                        {formatDate(step.appointmentDate)}
-                      </div>
-                    )}
-                  </div>
-
-                  {/* 等待状态详情 */}
+                <div className="px-5 pb-5 bg-gray-50 border-t-2 border-gray-200">
+                  {/* 等待状态（简化显示） */}
                   {step.waitingStatus && step.status !== "completed" && (
-                    <div className="mb-3 bg-white p-3 rounded-lg">
-                      <h4 className="font-medium text-gray-700 mb-2">当前等待状况:</h4>
+                    <div className="mb-4 bg-white p-4 rounded-xl border border-gray-200">
+                      <h4 className="text-lg font-bold text-gray-800 mb-3">当前等待状况</h4>
                       <div className="flex justify-between items-center">
                         <div className="flex items-center">
                           <div
-                            className={`w-3 h-3 rounded-full mr-2 ${
+                            className={`w-4 h-4 rounded-full mr-3 ${
                               step.waitingStatus.status === "low"
-                                ? "bg-green-500"
+                                ? "bg-green-700"
                                 : step.waitingStatus.status === "medium"
-                                  ? "bg-yellow-500"
-                                  : "bg-red-500"
+                                  ? "bg-orange-600"
+                                  : "bg-red-700"
                             }`}
                           ></div>
-                          <span className="text-gray-700">{getWaitingStatusText(step.waitingStatus.status)}</span>
+                          <span className="text-lg font-medium text-gray-800">{getWaitingStatusText(step.waitingStatus.status)}</span>
                         </div>
-                        <div className="text-gray-700">
-                          <span className="font-medium">{step.waitingStatus.waitingCount}</span> 人等待
+                        <div className="text-lg font-bold text-gray-800">
+                          {step.waitingStatus.waitingCount} 人排队
                         </div>
-                        <div className="text-gray-700">
-                          预计等待: <span className="font-medium">{step.waitingStatus.estimatedWaitTime}</span> 分钟
-                        </div>
-                      </div>
-
-                      {/* 等待进度条 */}
-                      <div className="mt-2 w-full bg-gray-200 rounded-full h-1.5">
-                        <div
-                          className={`h-1.5 rounded-full ${
-                            step.waitingStatus.status === "low"
-                              ? "bg-green-500"
-                              : step.waitingStatus.status === "medium"
-                                ? "bg-yellow-500"
-                                : "bg-red-500"
-                          }`}
-                          style={{ width: `${Math.min(100, (step.waitingStatus.waitingCount / 20) * 100)}%` }}
-                        ></div>
-                      </div>
-
-                      <div className="mt-2 text-xs text-gray-500 flex justify-between">
-                        <span>最佳时段: 14:00-16:00</span>
-                        <button
-                          onClick={() =>
-                            router.push(`/waiting-status?dept=${encodeURIComponent(step.department.split("/")[0])}`)
-                          }
-                          className="text-primary-500 flex items-center"
-                        >
-                          查看详情 <ChevronRight className="h-3 w-3 ml-1" />
-                        </button>
-                      </div>
-                    </div>
-                  )}
-
-                  {/* AI优化建议 */}
-                  {step.aiSuggestion && (
-                    <div className="mb-3 bg-blue-50 p-3 rounded-lg flex items-start">
-                      <Lightbulb className="h-5 w-5 text-blue-500 mr-2 flex-shrink-0 mt-0.5" />
-                      <div>
-                        <h4 className="font-medium text-blue-700 mb-1">AI优化建议:</h4>
-                        <p className="text-blue-600 text-sm">{step.aiSuggestion}</p>
-
-                        {isParallelStep(step.id) && getParallelSteps(step.id).length > 0 && (
-                          <div className="mt-2 text-sm">
-                            <span className="font-medium">可与以下步骤并行: </span>
-                            {getParallelSteps(step.id).join(", ")}
-                          </div>
-                        )}
                       </div>
                     </div>
                   )}
 
                   {/* 医生备注 */}
                   {step.notes && (
-                    <div className="mb-3">
-                      <h4 className="font-medium text-primary-700 mb-1">医生备注:</h4>
-                      <p className="bg-white p-2 rounded-lg text-gray-700">{step.notes}</p>
+                    <div className="mb-4">
+                      <h4 className="text-lg font-bold text-gray-800 mb-2">医生备注</h4>
+                      <div className="bg-white p-4 rounded-xl border border-gray-200">
+                        <p className="text-base text-gray-700 leading-relaxed">{step.notes}</p>
+                      </div>
                     </div>
                   )}
 
-                  {/* 详细内容 */}
-                  <h4 className="font-medium text-primary-700 mb-2">检查项目:</h4>
-                  <ul className="list-disc pl-5 space-y-1">
-                    {step.details.map((detail, i) => (
-                      <li key={i} className="text-primary-800">
-                        {detail}
-                      </li>
-                    ))}
-                  </ul>
-
-                  {/* 操作按钮 */}
-                  <div className="mt-4 flex justify-between items-center">
+                  {/* 简化的操作按钮 */}
+                  <div className="flex flex-col gap-3">
                     {step.status === "pending" && (
                       <Link
                         href={`/appointments/new?department=${encodeURIComponent(step.department.split("/")[0])}`}
-                        className="bg-primary-300 text-white px-4 py-2 rounded-lg flex items-center"
+                        className="bg-green-700 hover:bg-green-800 text-white px-6 py-4 rounded-xl flex items-center justify-center text-lg font-bold"
                       >
-                        <Calendar className="h-4 w-4 mr-1" />
-                        预约此步骤
+                        <Calendar className="h-6 w-6 mr-2" />
+                        预约{step.name}
                       </Link>
                     )}
 
                     {step.status !== "completed" && (
                       <Link
                         href={`/route-planner?to=${encodeURIComponent(step.department.split("/")[0])}`}
-                        className="bg-primary-300 text-white px-4 py-2 rounded-lg flex items-center"
+                        className="bg-blue-700 hover:bg-blue-800 text-white px-6 py-4 rounded-xl flex items-center justify-center text-lg font-bold"
                       >
-                        <Building2 className="h-4 w-4 mr-1" />
-                        前往科室
+                        <MapPin className="h-6 w-6 mr-2" />
+                        前往{step.department}
                       </Link>
                     )}
 
                     {step.status === "completed" && (
-                      <div className="text-green-600 flex items-center">
-                        <CheckCircle2 className="h-5 w-5 mr-1" />
-                        此步骤已完成
+                      <div className="bg-green-100 text-green-800 px-6 py-4 rounded-xl flex items-center justify-center text-lg font-bold border-2 border-green-300">
+                        <CheckCircle2 className="h-6 w-6 mr-2" />
+                        已完成此步骤
                       </div>
                     )}
                   </div>
@@ -1346,12 +1126,16 @@ export default function DiseaseRoutePage() {
         </div>
       </div>
 
-      {/* 底部说明 */}
-      <div className="p-4 mt-4 bg-gray-100 text-gray-600 text-sm">
-        <p className="flex items-center">
-          <AlertCircle className="h-4 w-4 mr-2 text-gray-500" />
-          此诊断导航图由医生根据您的具体情况定制，请按照步骤进行检查和治疗。
-        </p>
+      {/* 简化的底部操作区域 */}
+      <div className="p-5 bg-white border-t-2 border-gray-200 mt-auto">
+        <button
+          onClick={refreshWaitingData}
+          disabled={isRefreshingWaiting}
+          className="w-full bg-primary-600 hover:bg-primary-700 text-white py-4 rounded-xl text-lg font-bold flex items-center justify-center"
+        >
+          <RefreshCw className={`h-6 w-6 mr-2 ${isRefreshingWaiting ? "animate-spin" : ""}`} />
+          {isRefreshingWaiting ? "正在更新..." : "刷新等待状况"}
+        </button>
       </div>
     </div>
   )

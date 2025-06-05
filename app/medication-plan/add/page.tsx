@@ -100,7 +100,7 @@ export default function AddMedicationPage() {
           <Link href="/medication-plan" className="mr-2">
             <ArrowLeft className="h-8 w-8" />
           </Link>
-          <h1 className="text-xl font-bold">添加用药计划</h1>
+          <h1 className="text-xl font-bold">为父母添加服药计划</h1>
         </div>
       </header>
 

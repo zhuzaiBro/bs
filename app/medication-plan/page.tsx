@@ -143,7 +143,7 @@ export default function MedicationPlanPage() {
             <Link href="/family" className="mr-2">
               <ArrowLeft className="h-8 w-8" />
             </Link>
-            <h1 className="text-xl font-bold">用药计划管理</h1>
+            <h1 className="text-xl font-bold">为父母配置服药计划</h1>
           </div>
           <Link href="/medication-plan/add" className="bg-white text-primary-500 p-2 rounded-full">
             <Plus className="h-6 w-6" />
@@ -156,9 +156,9 @@ export default function MedicationPlanPage() {
         <div className="flex items-start">
           <AlertCircle className="h-5 w-5 text-primary-500 mr-2 mt-0.5" />
           <div>
-            <h2 className="text-lg font-semibold text-primary-700">用药计划管理</h2>
+            <h2 className="text-lg font-semibold text-primary-700">为父母设置服药计划</h2>
             <p className="text-primary-600 text-sm">
-              在此页面可以为老年人设置用药计划，包括药物名称、剂量、服用时间等。老年人可以在"用药提醒"页面查看今日服药计划。
+              在这里为父母设置详细的服药计划，包括药物名称、剂量、服用时间等。配置完成后，父母可以在老人端的"今日提醒事项"中看到服药提醒，点击提醒可查看详细信息。
             </p>
           </div>
         </div>
@@ -166,6 +166,25 @@ export default function MedicationPlanPage() {
 
       {/* 药物列表 */}
       <div className="p-4 space-y-4">
+        {/* 成功提示 */}
+        {medications.length > 0 && (
+          <div className="bg-green-50 border border-green-200 rounded-xl p-4">
+            <div className="flex items-start">
+              <div className="w-6 h-6 rounded-full bg-green-500 flex items-center justify-center mr-3 mt-0.5">
+                <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                </svg>
+              </div>
+              <div>
+                <h3 className="font-semibold text-green-800 mb-1">服药计划已配置成功</h3>
+                <p className="text-green-700 text-sm">
+                  您已经为父母配置了 {medications.length} 个服药计划。父母现在可以在<strong>老人端首页的"今日提醒事项"</strong>中看到每日的服药提醒，点击提醒可查看详细的用药信息。
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+
         {medications.length > 0 ? (
           medications.map((medication) => (
             <div

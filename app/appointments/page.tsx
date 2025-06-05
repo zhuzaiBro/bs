@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import {
   ArrowLeft,
   Calendar,
@@ -14,13 +15,39 @@ import {
   Users,
   Filter,
   Brain,
+  Navigation,
 } from "lucide-react"
 
+// 定义类型
+interface Appointment {
+  id: string;
+  department: string;
+  doctor: string;
+  date: string;
+  time: string;
+  status: "confirmed" | "pending" | "cancelled";
+  notes?: string;
+  patientId: string;
+  patientName?: string;
+  patientRelation?: string;
+  aiRecommended?: boolean;
+  confidence?: number;
+  createdAt: string;
+}
+
+interface FamilyMember {
+  id: string;
+  name: string;
+  relation: string;
+  [key: string]: any;
+}
+
 export default function AppointmentsPage() {
+  const router = useRouter()
   // 模拟预约数据
-  const [appointments, setAppointments] = useState([])
+  const [appointments, setAppointments] = useState<Appointment[]>([])
   const [loading, setLoading] = useState(true)
-  const [familyMembers, setFamilyMembers] = useState([])
+  const [familyMembers, setFamilyMembers] = useState<FamilyMember[]>([])
   const [filterPatientId, setFilterPatientId] = useState("all")
   const [showFilters, setShowFilters] = useState(false)
 
@@ -42,33 +69,33 @@ export default function AppointmentsPage() {
   }, [])
 
   // 取消预约
-  const cancelAppointment = (id) => {
-    const updatedAppointments = appointments.map((app) => (app.id === id ? { ...app, status: "cancelled" } : app))
+  const cancelAppointment = (id: string) => {
+    const updatedAppointments = appointments.map((app) => (app.id === id ? { ...app, status: "cancelled" as const } : app))
     setAppointments(updatedAppointments)
     localStorage.setItem("appointments", JSON.stringify(updatedAppointments))
   }
 
   // 获取状态标签样式
-  const getStatusBadge = (status) => {
+  const getStatusBadge = (status: Appointment["status"]) => {
     switch (status) {
       case "confirmed":
         return (
-          <span className="flex items-center text-green-600 bg-green-50 px-2 py-1 rounded-full text-sm">
-            <CheckCircle2 className="h-4 w-4 mr-1" />
+          <span className="flex items-center text-white bg-green-700 px-3 py-2 rounded-full text-base font-medium">
+            <CheckCircle2 className="h-5 w-5 mr-1" />
             已确认
           </span>
         )
       case "pending":
         return (
-          <span className="flex items-center text-yellow-600 bg-yellow-50 px-2 py-1 rounded-full text-sm">
-            <Clock className="h-4 w-4 mr-1" />
+          <span className="flex items-center text-white bg-orange-600 px-3 py-2 rounded-full text-base font-medium">
+            <Clock className="h-5 w-5 mr-1" />
             待确认
           </span>
         )
       case "cancelled":
         return (
-          <span className="flex items-center text-red-600 bg-red-50 px-2 py-1 rounded-full text-sm">
-            <XCircle className="h-4 w-4 mr-1" />
+          <span className="flex items-center text-white bg-red-700 px-3 py-2 rounded-full text-base font-medium">
+            <XCircle className="h-5 w-5 mr-1" />
             已取消
           </span>
         )
@@ -78,7 +105,7 @@ export default function AppointmentsPage() {
   }
 
   // 格式化日期显示
-  const formatDate = (dateStr) => {
+  const formatDate = (dateStr: string) => {
     const date = new Date(dateStr)
     return `${date.getMonth() + 1}月${date.getDate()}日`
   }
@@ -86,6 +113,39 @@ export default function AppointmentsPage() {
   // 过滤预约
   const filteredAppointments =
     filterPatientId === "all" ? appointments : appointments.filter((app) => app.patientId === filterPatientId)
+
+  // 获取科室对应的疾病名称，用于路由
+  const getDiseaseFromDepartment = (department: string): string => {
+    const departmentMap: Record<string, string> = {
+      '内科': 'gao-xue-ya',
+      '心血管内科': 'gao-xue-ya',
+      '心内科': 'gao-xue-ya', 
+      '高血压门诊': 'gao-xue-ya',
+      '口腔科': 'ya-tong',
+      '牙科': 'ya-tong',
+      '内分泌科': 'tang-niao-bing',
+      '糖尿病门诊': 'tang-niao-bing',
+      '骨科': 'guan-jie-yan',
+      '风湿免疫科': 'guan-jie-yan',
+      '关节外科': 'guan-jie-yan',
+      '呼吸内科': 'gao-xue-ya',
+      '消化内科': 'gao-xue-ya',
+      '神经内科': 'gao-xue-ya',
+      '眼科': 'gao-xue-ya',
+      '耳鼻喉科': 'ya-tong',
+      '皮肤科': 'gao-xue-ya',
+      '妇科': 'gao-xue-ya',
+      '儿科': 'gao-xue-ya'
+    }
+    // 如果没有找到对应的映射，默认返回通用的高血压路线
+    return departmentMap[department] || 'gao-xue-ya'
+  }
+
+  // 处理预约记录点击
+  const handleAppointmentClick = (appointment: Appointment) => {
+    const disease = getDiseaseFromDepartment(appointment.department)
+    router.push(`/my-routes/${disease}`)
+  }
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
@@ -138,16 +198,16 @@ export default function AppointmentsPage() {
       {/* 筛选选项 */}
       {showFilters && (
         <div className="p-4 bg-white border-b border-gray-200">
-          <h2 className="text-lg font-medium text-gray-700 mb-2 flex items-center">
-            <Users className="h-5 w-5 mr-2" />
+          <h2 className="text-xl font-bold text-gray-800 mb-3 flex items-center">
+            <Users className="h-6 w-6 mr-2" />
             按就诊人筛选
           </h2>
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-3">
             <button
-              className={`px-3 py-1.5 rounded-lg border ${
+              className={`px-4 py-2.5 rounded-lg border text-base font-medium ${
                 filterPatientId === "all"
-                  ? "border-primary-300 bg-primary-50 text-primary-700"
-                  : "border-gray-300 bg-white text-gray-700"
+                  ? "border-primary-300 bg-primary-700 text-white"
+                  : "border-gray-400 bg-white text-gray-800 hover:bg-gray-100"
               }`}
               onClick={() => setFilterPatientId("all")}
             >
@@ -156,10 +216,10 @@ export default function AppointmentsPage() {
             {familyMembers.map((member) => (
               <button
                 key={member.id}
-                className={`px-3 py-1.5 rounded-lg border ${
+                className={`px-4 py-2.5 rounded-lg border text-base font-medium ${
                   filterPatientId === member.id
-                    ? "border-primary-300 bg-primary-50 text-primary-700"
-                    : "border-gray-300 bg-white text-gray-700"
+                    ? "border-primary-300 bg-primary-700 text-white"
+                    : "border-gray-400 bg-white text-gray-800 hover:bg-gray-100"
                 }`}
                 onClick={() => setFilterPatientId(member.id)}
               >
@@ -179,59 +239,82 @@ export default function AppointmentsPage() {
         ) : filteredAppointments.length > 0 ? (
           <div className="space-y-4">
             {filteredAppointments.map((appointment) => (
-              <div key={appointment.id} className="bg-white rounded-xl shadow-md p-4">
-                <div className="flex justify-between items-start">
-                  <h2 className="text-xl font-bold">{appointment.department}</h2>
-                  {getStatusBadge(appointment.status)}
-                </div>
+              <div key={appointment.id} className="bg-white rounded-xl shadow-md overflow-hidden">
+                {/* 可点击的预约信息区域 */}
+                <button
+                  onClick={() => handleAppointmentClick(appointment)}
+                  className="w-full p-5 text-left hover:bg-gray-50 transition-colors duration-200 group"
+                >
+                  <div className="flex justify-between items-start">
+                    <h2 className="text-2xl font-bold text-gray-900 group-hover:text-primary-600 transition-colors duration-200">
+                      {appointment.department}
+                    </h2>
+                    <div className="flex items-center gap-3">
+                      {getStatusBadge(appointment.status)}
+                      <Navigation className="h-6 w-6 text-gray-400 group-hover:text-primary-500 transition-colors duration-200" />
+                    </div>
+                  </div>
 
-                {/* 就诊人信息 */}
-                {appointment.patientName && (
-                  <div className="mt-2 bg-blue-50 p-2 rounded-lg inline-block">
-                    <div className="flex items-center text-blue-700">
-                      <Users className="h-4 w-4 mr-1" />
-                      <span className="text-sm">
-                        就诊人: {appointment.patientName}
-                        {appointment.patientRelation !== "本人" && ` (${appointment.patientRelation})`}
+                  {/* 就诊人信息 */}
+                  {appointment.patientName && (
+                    <div className="mt-3 bg-blue-700 p-3 rounded-lg inline-block">
+                      <div className="flex items-center text-white">
+                        <Users className="h-5 w-5 mr-2" />
+                        <span className="text-base font-medium">
+                          就诊人: {appointment.patientName}
+                          {appointment.patientRelation !== "本人" && ` (${appointment.patientRelation})`}
+                        </span>
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="mt-4 space-y-3">
+                    <div className="flex items-center text-gray-800">
+                      <Calendar className="h-6 w-6 text-primary-500 mr-3" />
+                      <span className="text-lg font-medium">
+                        {formatDate(appointment.date)} {appointment.time}
                       </span>
                     </div>
-                  </div>
-                )}
 
-                <div className="mt-3 space-y-2">
-                  <div className="flex items-center text-gray-700">
-                    <Calendar className="h-5 w-5 text-primary-500 mr-2" />
-                    <span>
-                      {formatDate(appointment.date)} {appointment.time}
-                    </span>
-                  </div>
-
-                  <div className="flex items-center text-gray-700">
-                    <Building2 className="h-5 w-5 text-primary-500 mr-2" />
-                    <span>{appointment.doctor}</span>
-                  </div>
-
-                  {appointment.notes && (
-                    <div className="bg-gray-50 p-2 rounded-lg text-gray-600 text-sm mt-2">{appointment.notes}</div>
-                  )}
-
-                  {/* AI推荐标记 */}
-                  {appointment.aiRecommended && (
-                    <div className="flex items-center text-green-600 mt-1">
-                      <Brain className="h-4 w-4 mr-1" />
-                      <span className="text-sm">AI推荐 · 匹配度: {appointment.confidence}%</span>
+                    <div className="flex items-center text-gray-800">
+                      <Building2 className="h-6 w-6 text-primary-500 mr-3" />
+                      <span className="text-lg font-medium">{appointment.doctor}</span>
                     </div>
-                  )}
-                </div>
 
+                    {appointment.notes && (
+                      <div className="bg-gray-700 text-white p-3 rounded-lg text-base font-medium mt-3">{appointment.notes}</div>
+                    )}
+
+                    {/* AI推荐标记 */}
+                    {appointment.aiRecommended && (
+                      <div className="flex items-center text-green-700 mt-2">
+                        <Brain className="h-5 w-5 mr-2" />
+                        <span className="text-base font-medium">AI推荐 · 匹配度: {appointment.confidence}%</span>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* 导航提示 */}
+                  <div className="mt-4 flex items-center text-base font-medium text-gray-700 group-hover:text-primary-600 transition-colors duration-200">
+                    <Navigation className="h-5 w-5 mr-2" />
+                    <span>点击查看就医路线</span>
+                  </div>
+                </button>
+
+                {/* 操作按钮区域 */}
                 {appointment.status !== "cancelled" && (
-                  <div className="mt-4 flex justify-end">
-                    <button
-                      onClick={() => cancelAppointment(appointment.id)}
-                      className="text-red-500 border border-red-200 px-4 py-2 rounded-lg text-sm"
-                    >
-                      取消预约
-                    </button>
+                  <div className="px-5 pb-4 border-t border-gray-100 bg-gray-50">
+                    <div className="flex justify-end pt-4">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          cancelAppointment(appointment.id)
+                        }}
+                        className="text-white bg-red-700 border border-red-700 px-6 py-3 rounded-lg text-base font-medium hover:bg-red-800 transition-colors duration-200"
+                      >
+                        取消预约
+                      </button>
+                    </div>
                   </div>
                 )}
               </div>
@@ -239,18 +322,18 @@ export default function AppointmentsPage() {
           </div>
         ) : (
           <div className="flex flex-col items-center justify-center py-12">
-            <Calendar className="h-16 w-16 text-gray-300 mb-4" />
-            <h2 className="text-xl font-bold text-gray-500">暂无预约</h2>
-            <p className="text-gray-400 mt-2">点击右上角加号添加新预约</p>
+            <Calendar className="h-20 w-20 text-gray-300 mb-6" />
+            <h2 className="text-2xl font-bold text-gray-600">暂无预约</h2>
+            <p className="text-gray-500 mt-3 text-lg">点击右上角加号添加新预约</p>
           </div>
         )}
       </div>
 
       {/* 提示信息 */}
       <div className="p-4 mt-auto">
-        <div className="bg-primary-50 p-3 rounded-lg border border-primary-100 flex items-start">
-          <AlertCircle className="h-5 w-5 text-primary-500 mr-2 flex-shrink-0 mt-0.5" />
-          <p className="text-sm text-primary-700">
+        <div className="bg-primary-50 p-4 rounded-lg border border-primary-100 flex items-start">
+          <AlertCircle className="h-6 w-6 text-primary-500 mr-3 flex-shrink-0 mt-1" />
+          <p className="text-base font-medium text-primary-800">
             预约成功后，请提前30分钟到达医院。如需取消预约，请至少提前4小时操作。
           </p>
         </div>

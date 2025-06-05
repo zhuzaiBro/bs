@@ -7,7 +7,16 @@ export default function EmergencyPage() {
       {/* 修改顶部导航栏部分 */}
 
       {/* 顶部导航栏 */}
-      <header className="bg-red-600 text-white">
+      <header className="bg-red-600 fixed left-0 top-0 w-full z-999 text-white">
+        <div className="status-bar-spacer"></div>
+        <div className="p-4 flex items-center">
+          <Link href="/" className="mr-2">
+            <ArrowLeft className="h-8 w-8" />
+          </Link>
+          <h1 className="text-2xl font-bold">紧急求助</h1>
+        </div>
+      </header>
+      <header className="opacity-0">
         <div className="status-bar-spacer"></div>
         <div className="p-4 flex items-center">
           <Link href="/" className="mr-2">
