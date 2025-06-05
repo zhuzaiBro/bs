@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from "react"
 import Link from "next/link"
-import { ArrowLeft, Pill, Clock, Calendar, AlertCircle, CheckCircle, Volume2, Bell, Home, Package } from "lucide-react"
+import { ArrowLeft, Pill, Clock, Calendar, AlertCircle, CheckCircle, Volume2, Bell, Home, Package, Loader2 } from "lucide-react"
+import { openMedicationBox, openMedicationBoxViaProxy } from "@/lib/medication-api"
 
 export default function MedicationReminderPage() {
   const [medications, setMedications] = useState([])
@@ -12,6 +13,10 @@ export default function MedicationReminderPage() {
   const [currentTime, setCurrentTime] = useState(new Date())
   const [showVoiceGuide, setShowVoiceGuide] = useState(false)
   const [fontSize, setFontSize] = useState("normal") // normal, large, extra-large
+  
+  // 新增：药盒操作状态
+  const [boxOperations, setBoxOperations] = useState(new Map()) // 存储每个药物的操作状态
+  const [showBoxResult, setShowBoxResult] = useState(null) // 显示操作结果
 
   // 从本地存储加载药物数据
   useEffect(() => {
@@ -103,18 +108,130 @@ export default function MedicationReminderPage() {
     }
   }, [medications, completedDoses, currentTime])
 
-  // 标记剂量为已完成，并减少库存
-  const markDoseAsCompleted = (doseId) => {
-    const newCompletedDoses = [...completedDoses, doseId]
-    setCompletedDoses(newCompletedDoses)
-    localStorage.setItem("completedDoses", JSON.stringify(newCompletedDoses))
+  // 新增：打开药盒的函数
+  const handleOpenMedicationBox = async (medicationId, doseId) => {
+    // 设置加载状态
+    setBoxOperations(prev => new Map(prev.set(doseId, 'loading')));
+    
+    try {
+      // 先尝试直接调用API
+      let result = await openMedicationBox(medicationId);
+      
+      // 如果直接调用失败，尝试通过代理
+      if (!result.success) {
+        console.log('直接调用失败，尝试代理方式...');
+        result = await openMedicationBoxViaProxy(medicationId);
+      }
+      
+      // 设置操作结果
+      setBoxOperations(prev => new Map(prev.set(doseId, result.success ? 'success' : 'error')));
+      
+      // 显示结果消息
+      setShowBoxResult({
+        type: result.success ? 'success' : 'error',
+        message: result.message
+      });
+      
+      // 3秒后清除结果显示
+      setTimeout(() => {
+        setShowBoxResult(null);
+        setBoxOperations(prev => {
+          const newMap = new Map(prev);
+          newMap.delete(doseId);
+          return newMap;
+        });
+      }, 3000);
+      
+      return result.success;
+    } catch (error) {
+      console.error('药盒操作异常:', error);
+      setBoxOperations(prev => new Map(prev.set(doseId, 'error')));
+      setShowBoxResult({
+        type: 'error',
+        message: '药盒操作失败，请重试'
+      });
+      
+      setTimeout(() => {
+        setShowBoxResult(null);
+        setBoxOperations(prev => {
+          const newMap = new Map(prev);
+          newMap.delete(doseId);
+          return newMap;
+        });
+      }, 3000);
+      
+      return false;
+    }
+  };
 
-    // 从doseId中提取药物ID (格式为 "${med.id}-${timeSlot}")
-    const medicationId = doseId.split("-")[0]
+  // 修改：标记剂量为已完成，增加打开药盒功能
+  const markDoseAsCompleted = async (doseId) => {
+    // 提取药物ID
+    const medicationId = doseId.split("-")[0];
+    
+    // 先尝试打开药盒
+    const boxOpened = await handleOpenMedicationBox(medicationId, doseId);
+    
+    // 无论药盒是否成功打开，都允许标记为已完成（因为可能是手动开盒）
+    const newCompletedDoses = [...completedDoses, doseId];
+    setCompletedDoses(newCompletedDoses);
+    localStorage.setItem("completedDoses", JSON.stringify(newCompletedDoses));
 
-    // 减少药物库存
-    decreaseInventory(medicationId)
-  }
+    // 减少库存
+    decreaseInventory(medicationId);
+  };
+
+  // 修改：获取按钮状态和样式
+  const getButtonState = (doseId) => {
+    const operationState = boxOperations.get(doseId);
+    
+    switch (operationState) {
+      case 'loading':
+        return {
+          disabled: true,
+          className: "bg-yellow-500 text-white",
+          content: (
+            <>
+              <Loader2 className="h-6 w-6 mr-2 animate-spin" />
+              打开药盒中...
+            </>
+          )
+        };
+      case 'success':
+        return {
+          disabled: false,
+          className: "bg-green-500 text-white",
+          content: (
+            <>
+              <CheckCircle className="h-6 w-6 mr-2" />
+              药盒已打开
+            </>
+          )
+        };
+      case 'error':
+        return {
+          disabled: false,
+          className: "bg-red-500 text-white",
+          content: (
+            <>
+              <AlertCircle className="h-6 w-6 mr-2" />
+              重试打开药盒
+            </>
+          )
+        };
+      default:
+        return {
+          disabled: false,
+          className: "bg-primary-500 text-white",
+          content: (
+            <>
+              <CheckCircle className="h-6 w-6 mr-2" />
+              已服用
+            </>
+          )
+        };
+    }
+  };
 
   // 减少药物库存的函数
   const decreaseInventory = (medicationId) => {
@@ -392,6 +509,24 @@ export default function MedicationReminderPage() {
         </p>
       </div>
 
+      {/* 操作结果提示 */}
+      {showBoxResult && (
+        <div className={`fixed top-20 left-4 right-4 z-50 p-4 rounded-lg shadow-lg ${
+          showBoxResult.type === 'success' 
+            ? 'bg-green-100 border border-green-300 text-green-800' 
+            : 'bg-red-100 border border-red-300 text-red-800'
+        }`}>
+          <div className="flex items-center">
+            {showBoxResult.type === 'success' ? (
+              <CheckCircle className="h-5 w-5 mr-2" />
+            ) : (
+              <AlertCircle className="h-5 w-5 mr-2" />
+            )}
+            <span className="font-medium">{showBoxResult.message}</span>
+          </div>
+        </div>
+      )}
+
       {/* 下一次服药提醒 */}
       {upcomingDoses.length > 0 && (
         <div className="p-4">
@@ -437,10 +572,10 @@ export default function MedicationReminderPage() {
 
             <button
               onClick={() => markDoseAsCompleted(upcomingDoses[0].id)}
-              className="mt-5 w-full bg-primary-500 text-white py-4 rounded-xl font-bold flex items-center justify-center text-xl"
+              disabled={getButtonState(upcomingDoses[0].id).disabled}
+              className={`mt-5 w-full py-4 rounded-xl font-bold flex items-center justify-center text-xl transition-all duration-200 ${getButtonState(upcomingDoses[0].id).className}`}
             >
-              <CheckCircle className="h-6 w-6 mr-2" />
-              已服用
+              {getButtonState(upcomingDoses[0].id).content}
             </button>
           </div>
         </div>
@@ -476,6 +611,7 @@ export default function MedicationReminderPage() {
                       {medication.timeSlots.map((timeSlot) => {
                         const doseId = `${medication.id}-${timeSlot}`
                         const isCompleted = completedDoses.includes(doseId)
+                        const buttonState = getButtonState(doseId)
 
                         return (
                           <div
@@ -509,9 +645,10 @@ export default function MedicationReminderPage() {
                             ) : (
                               <button
                                 onClick={() => markDoseAsCompleted(doseId)}
-                                className="bg-primary-500 text-white px-5 py-2 rounded-lg text-lg font-medium"
+                                disabled={buttonState.disabled}
+                                className={`px-5 py-2 rounded-lg text-lg font-medium transition-all duration-200 ${buttonState.className}`}
                               >
-                                标记为已服用
+                                {buttonState.content}
                               </button>
                             )}
                           </div>
